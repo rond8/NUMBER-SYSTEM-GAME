@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base Master Pro</title>
+    <title>Base Master: Mega Edition</title>
     <style>
         :root {
-            --primary: #00ff88;
+            --primary: #fbbf24;
+            --secondary: #3b82f6;
             --bg: #0f172a;
             --card: #1e293b;
             --text: #f8fafc;
         }
 
         body {
-            font-family: 'Monaco', 'Courier New', monospace;
+            font-family: 'Courier New', Courier, monospace;
             background-color: var(--bg);
             color: var(--text);
             display: flex;
@@ -25,97 +26,123 @@
 
         .container {
             background: var(--card);
-            padding: 2.5rem;
+            padding: 2rem;
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            width: 450px;
+            width: 90%;
+            max-width: 600px;
             text-align: center;
             border: 1px solid #334155;
+            position: relative;
         }
 
         .stats {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             font-weight: bold;
             color: var(--primary);
-            font-size: 1.1rem;
         }
 
         .question-box {
-            margin: 25px 0;
-            padding: 25px;
-            background: rgba(0,0,0,0.2);
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
             border-radius: 12px;
+            overflow-x: auto;
         }
 
         #target-display {
-            font-size: 3rem;
+            font-size: 2.2rem;
             display: inline-block;
             color: white;
-            letter-spacing: 4px;
+            white-space: nowrap;
         }
 
         .base-sub {
-            font-size: 1.2rem;
+            font-size: 1rem;
             vertical-align: sub;
             color: var(--primary);
-            margin-left: 5px;
+            margin-left: 8px;
         }
 
         input {
             width: 80%;
-            padding: 15px;
-            font-size: 1.5rem;
+            padding: 12px;
+            font-size: 1.3rem;
             border-radius: 8px;
             border: 2px solid #334155;
             background: #0f172a;
             color: white;
             text-align: center;
-            outline: none;
+            margin-bottom: 10px;
         }
 
-        input:focus { border-color: var(--primary); }
-
-        .controls label { display: block; margin: 15px 0 5px; font-size: 0.9rem; opacity: 0.8; }
+        .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
         
         button {
-            background: var(--primary);
-            color: #064e3b;
-            border: none;
-            padding: 12px 30px;
+            padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
-            font-weight: 900;
-            font-size: 1rem;
-            transition: all 0.2s;
+            font-weight: 800;
+            border: none;
+            transition: 0.2s;
         }
 
-        button:hover { filter: brightness(1.1); transform: translateY(-2px); }
-        button:active { transform: translateY(0); }
+        .btn-main { background: var(--primary); color: #451a03; }
+        .btn-help { background: var(--secondary); color: white; }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            text-align: left;
+            border: 1px solid var(--secondary);
+        }
+
+        .formula-box {
+            background: #0f172a;
+            padding: 10px;
+            border-left: 4px solid var(--secondary);
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
 
         .hidden { display: none; }
-        #feedback { margin-top: 15px; height: 24px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container" id="setup-screen">
-    <h1 style="margin-top:0">BASE MASTER 2.0</h1>
-    <div class="controls">
-        <label>Difficulty Range</label>
-        <select id="difficulty" style="padding: 8px; width: 100%;">
-            <option value="15">Easy (0 - 15)</option>
-            <option value="63">Medium (0 - 63)</option>
-            <option value="255">Hard (0 - 255)</option>
-            <option value="1023">Expert (0 - 1023)</option>
-        </select>
+    <h1 style="color: var(--primary)">BASE MASTER</h1>
+    <p>Range: 100 - 4,000,000</p>
+    
+    <label>Limit:</label><br>
+    <select id="difficulty" style="padding: 10px; width: 80%; margin-bottom: 15px;">
+        <option value="1000">1,000</option>
+        <option value="50000">50,000</option>
+        <option value="1000000">1,000,000</option>
+        <option value="4000000">4,000,000</option>
+    </select><br>
 
-        <label>Timer (Seconds)</label>
-        <input type="number" id="timer-input" value="45" min="5" style="width: 100px; font-size: 1rem; padding: 8px;">
-    </div>
-    <br><br>
-    <button onclick="startGame()">INITIALIZE GAME</button>
+    <label>Timer (Seconds):</label><br>
+    <input type="number" id="timer-input" value="60" style="width: 60px;"><br><br>
+
+    <button class="btn-main" onclick="startGame()">START MISSION</button>
 </div>
 
 <div class="container hidden" id="game-screen">
@@ -125,38 +152,62 @@
     </div>
 
     <div class="question-box">
-        <div style="margin-bottom: 10px; opacity: 0.7;">Convert to <span id="to-base-name"></span></div>
+        <div style="margin-bottom: 10px; opacity: 0.6;">Convert to <span id="to-base-name" style="color:white"></span></div>
         <span id="target-display">--</span><span class="base-sub" id="from-base-sub"></span>
     </div>
 
-    <input type="text" id="answer-input" placeholder="Type Answer..." autocomplete="off">
-    <div id="feedback"></div>
-    <br>
-    <button onclick="checkAnswer()">SUBMIT [ENTER]</button>
+    <input type="text" id="answer-input" placeholder="Result..." autocomplete="off">
+    
+    <div class="btn-group">
+        <button class="btn-main" onclick="checkAnswer()">SUBMIT</button>
+        <button class="btn-help" onclick="toggleModal(true)">FORMULAS</button>
+    </div>
+    <div id="feedback" style="margin-top:15px; font-weight:bold;"></div>
+</div>
+
+<div id="formula-modal" class="modal" onclick="toggleModal(false)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h3>Conversion Guide</h3>
+        
+        <strong>1. Decimal to Any Base (Division Method)</strong>
+        <p>Divide the decimal number by the target base. Keep the remainder. Repeat until the quotient is 0. Read remainders bottom-up.</p>
+        <div class="formula-box">
+            Example: 13 to Binary (Base 2)<br>
+            13 ÷ 2 = 6 (Rem: 1)<br>
+            6 ÷ 2 = 3 (Rem: 0)<br>
+            3 ÷ 2 = 1 (Rem: 1)<br>
+            1 ÷ 2 = 0 (Rem: 1) &rarr; <strong>1101</strong>
+        </div>
+
+        <strong>2. Any Base to Decimal (Positional)</strong>
+        <p>Multiply each digit by the base raised to its position power ($base^{position}$), then sum them up.</p>
+        <div class="formula-box">
+            Example: $101_2$ to Decimal<br>
+            $(1 \times 2^2) + (0 \times 2^1) + (1 \times 2^0)$<br>
+            $4 + 0 + 1 = 5$
+        </div>
+
+        <strong>3. Hexadecimal Key</strong>
+        <p>A=10, B=11, C=12, D=13, E=14, F=15</p>
+
+        <button class="btn-main" style="width:100%" onclick="toggleModal(false)">CLOSE</button>
+    </div>
 </div>
 
 <script>
-    let score = 0;
-    let timeLeft = 0;
-    let gameInterval;
-    let currentCorrectAnswer = "";
+    let score = 0, timeLeft = 0, gameInterval, currentCorrectAnswer = "";
+    const bases = [{n:"Decimal", v:10}, {n:"Binary", v:2}, {n:"Octal", v:8}, {n:"Hex", v:16}];
 
-    const bases = [
-        { name: "Decimal", value: 10 },
-        { name: "Binary", value: 2 },
-        { name: "Octal", value: 8 },
-        { name: "Hexadecimal", value: 16 }
-    ];
+    function toggleModal(show) {
+        document.getElementById('formula-modal').style.display = show ? 'flex' : 'none';
+    }
 
     function startGame() {
         score = 0;
         timeLeft = parseInt(document.getElementById('timer-input').value);
         document.getElementById('setup-screen').classList.add('hidden');
-        document.getElementById('game-screen').classList.remove('remove', 'hidden');
-        document.getElementById('score').innerText = score;
-        
+        document.getElementById('game-screen').classList.remove('hidden');
         nextQuestion();
-        
         gameInterval = setInterval(() => {
             timeLeft--;
             document.getElementById('timer').innerText = timeLeft;
@@ -165,72 +216,46 @@
     }
 
     function nextQuestion() {
-        const maxNum = parseInt(document.getElementById('difficulty').value);
-        const randomNum = Math.floor(Math.random() * (maxNum + 1));
-        
-        let b1 = Math.floor(Math.random() * bases.length);
-        let b2;
-        do { b2 = Math.floor(Math.random() * bases.length); } while (b1 === b2);
+        const max = parseInt(document.getElementById('difficulty').value);
+        const num = Math.floor(Math.random() * (max - 100 + 1)) + 100;
+        let b1 = Math.floor(Math.random()*4), b2;
+        do { b2 = Math.floor(Math.random()*4); } while(b1===b2);
 
-        const fromBase = bases[b1];
-        const toBase = bases[b2];
-
-        // Format the display: uppercase and pad to at least 4 digits
-        let displayVal = randomNum.toString(fromBase.value).toUpperCase();
-        while(displayVal.length < 4) {
-            displayVal = "0" + displayVal;
-        }
-
-        document.getElementById('to-base-name').innerText = toBase.name;
-        document.getElementById('from-base-sub').innerText = fromBase.value;
-        document.getElementById('target-display').innerText = displayVal;
+        document.getElementById('to-base-name').innerText = bases[b2].n;
+        document.getElementById('from-base-sub').innerText = bases[b1].v;
         
-        // Correct answer (we don't pad the answer unless it's binary, 
-        // but usually, leading zeros in math don't change value. 
-        // We'll accept the standard string conversion).
-        currentCorrectAnswer = randomNum.toString(toBase.value).toUpperCase();
+        let display = num.toString(bases[b1].v).toUpperCase().padStart(4, '0');
+        document.getElementById('target-display').innerText = display;
         
+        currentCorrectAnswer = num.toString(bases[b2].v).toUpperCase();
         document.getElementById('answer-input').value = "";
         document.getElementById('answer-input').focus();
         document.getElementById('feedback').innerText = "";
     }
 
     function checkAnswer() {
-        let userAnswer = document.getElementById('answer-input').value.trim().toUpperCase();
-        const feedback = document.getElementById('feedback');
+        let user = document.getElementById('answer-input').value.trim().toUpperCase().replace(/^0+(?!$)/, '');
+        let correct = currentCorrectAnswer.replace(/^0+(?!$)/, '');
 
-        // Logic: Remove leading zeros from user answer for comparison 
-        // so "0010" and "10" are both correct for decimal ten.
-        let normalizedUser = userAnswer.replace(/^0+(?!$)/, '');
-        let normalizedCorrect = currentCorrectAnswer.replace(/^0+(?!$)/, '');
-
-        if (normalizedUser === normalizedCorrect && userAnswer !== "") {
+        if (user === correct && user !== "") {
             score++;
             document.getElementById('score').innerText = score;
-            feedback.style.color = varColor('--primary');
-            feedback.innerText = "✓ EXCELLENT";
+            document.getElementById('feedback').style.color = "#4ade80";
+            document.getElementById('feedback').innerText = "CORRECT!";
             setTimeout(nextQuestion, 600);
         } else {
-            feedback.style.color = "#ff4444";
-            feedback.innerText = "× INCORRECT";
+            document.getElementById('feedback').style.color = "#f87171";
+            document.getElementById('feedback').innerText = "WRONG! TRY AGAIN";
         }
     }
 
-    function varColor(name) {
-        return getComputedStyle(document.documentElement).getPropertyValue(name);
-    }
-
-    document.getElementById('answer-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkAnswer();
-    });
-
     function endGame() {
         clearInterval(gameInterval);
-        alert(`SESSION COMPLETE\nFinal Score: ${score}`);
-        document.getElementById('setup-screen').classList.remove('hidden');
-        document.getElementById('game-screen').classList.add('hidden');
+        alert("Time's up! Score: " + score);
+        location.reload();
     }
-</script>
 
+    document.getElementById('answer-input').addEventListener('keypress', (e) => { if(e.key==='Enter') checkAnswer(); });
+</script>
 </body>
 </html>
