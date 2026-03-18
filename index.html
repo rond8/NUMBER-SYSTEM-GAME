@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base Converter Challenge</title>
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 400px;
+            text-align: center;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .question-box {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #333;
+            border-radius: 10px;
+        }
+
+        #target-value {
+            font-size: 2.5rem;
+            display: block;
+            color: white;
+            margin: 10px 0;
+        }
+
+        input {
+            width: 80%;
+            padding: 12px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            border: none;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .controls label { display: block; margin-top: 10px; font-size: 0.9rem; }
+        
+        button {
+            background: var(--primary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.1s;
+        }
+
+        button:active { transform: scale(0.95); }
+
+        .hidden { display: none; }
+        #feedback { margin-top: 10px; height: 20px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="setup-screen">
+    <h1>Base Master</h1>
+    <div class="controls">
+        <label>Difficulty (Max Number)</label>
+        <select id="difficulty">
+            <option value="15">Easy (0-15)</option>
+            <option value="63">Medium (0-63)</option>
+            <option value="255">Hard (0-255)</option>
+        </select>
+
+        <label>Timer (Seconds)</label>
+        <input type="number" id="timer-input" value="30" min="5" style="width: 60px;">
+    </div>
+    <br>
+    <button onclick="startGame()">START GAME</button>
+</div>
+
+<div class="container hidden" id="game-screen">
+    <div class="stats">
+        <span>Score: <span id="score">0</span></span>
+        <span>Time: <span id="timer">0</span>s</span>
+    </div>
+
+    <div class="question-box">
+        Convert <span id="from-base" style="color:var(--primary)"></span> to <span id="to-base" style="color:var(--primary)"></span>:
+        <strong id="target-value">--</strong>
+    </div>
+
+    <input type="text" id="answer-input" placeholder="Type answer..." autocomplete="off">
+    <div id="feedback"></div>
+    <br>
+    <button onclick="checkAnswer()">SUBMIT</button>
+</div>
+
+<script>
+    let score = 0;
+    let timeLeft = 0;
+    let gameInterval;
+    let currentCorrectAnswer = "";
+    const bases = [
+        { name: "Decimal", value: 10 },
+        { name: "Binary", value: 2 },
+        { name: "Octal", value: 8 },
+        { name: "Hexadecimal", value: 16 }
+    ];
+
+    function startGame() {
+        score = 0;
+        timeLeft = parseInt(document.getElementById('timer-input').value);
+        document.getElementById('setup-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        document.getElementById('score').innerText = score;
+        
+        nextQuestion();
+        
+        gameInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer').innerText = timeLeft;
+            if (timeLeft <= 0) endGame();
+        }, 1000);
+    }
+
+    function nextQuestion() {
+        const maxNum = parseInt(document.getElementById('difficulty').value);
+        const randomNum = Math.floor(Math.random() * (maxNum + 1));
+        
+        // Pick two different random bases
+        let b1 = Math.floor(Math.random() * bases.length);
+        let b2;
+        do { b2 = Math.floor(Math.random() * bases.length); } while (b1 === b2);
+
+        const fromBase = bases[b1];
+        const toBase = bases[b2];
+
+        document.getElementById('from-base').innerText = fromBase.name;
+        document.getElementById('to-base').innerText = toBase.name;
+        document.getElementById('target-value').innerText = randomNum.toString(fromBase.value).toUpperCase();
+        
+        currentCorrectAnswer = randomNum.toString(toBase.value).toUpperCase();
+        document.getElementById('answer-input').value = "";
+        document.getElementById('answer-input').focus();
+    }
+
+    function checkAnswer() {
+        const userAnswer = document.getElementById('answer-input').value.trim().toUpperCase();
+        const feedback = document.getElementById('feedback');
+
+        if (userAnswer === currentCorrectAnswer) {
+            score++;
+            document.getElementById('score').innerText = score;
+            feedback.style.color = "#4caf50";
+            feedback.innerText = "Correct!";
+            nextQuestion();
+        } else {
+            feedback.style.color = "#f44336";
+            feedback.innerText = "Wrong! Try again.";
+        }
+    }
+
+    // Allow Enter key to submit
+    document.getElementById('answer-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkAnswer();
+    });
+
+    function endGame() {
+        clearInterval(gameInterval);
+        alert(`Game Over! Your final score: ${score}`);
+        document.getElementById('setup-screen').classList.remove('hidden');
+        document.getElementById('game-screen').classList.add('hidden');
+    }
+</script>
+
+</body>
+</html>
