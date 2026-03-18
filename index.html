@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base Converter Challenge</title>
+    <title>Base Master Pro</title>
     <style>
         :root {
-            --primary: #00d4ff;
-            --bg: #121212;
-            --card: #1e1e1e;
-            --text: #e0e0e0;
+            --primary: #00ff88;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Monaco', 'Courier New', monospace;
             background-color: var(--bg);
             color: var(--text);
             display: flex;
@@ -25,98 +25,114 @@
 
         .container {
             background: var(--card);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            width: 400px;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            width: 450px;
             text-align: center;
+            border: 1px solid #334155;
         }
 
         .stats {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
             font-weight: bold;
             color: var(--primary);
+            font-size: 1.1rem;
         }
 
         .question-box {
-            font-size: 1.2rem;
-            margin: 20px 0;
-            padding: 20px;
-            border: 2px solid #333;
-            border-radius: 10px;
+            margin: 25px 0;
+            padding: 25px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
         }
 
-        #target-value {
-            font-size: 2.5rem;
-            display: block;
+        #target-display {
+            font-size: 3rem;
+            display: inline-block;
             color: white;
-            margin: 10px 0;
+            letter-spacing: 4px;
+        }
+
+        .base-sub {
+            font-size: 1.2rem;
+            vertical-align: sub;
+            color: var(--primary);
+            margin-left: 5px;
         }
 
         input {
             width: 80%;
-            padding: 12px;
-            font-size: 1.2rem;
-            border-radius: 5px;
-            border: none;
-            margin-bottom: 20px;
+            padding: 15px;
+            font-size: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid #334155;
+            background: #0f172a;
+            color: white;
             text-align: center;
+            outline: none;
         }
 
-        .controls label { display: block; margin-top: 10px; font-size: 0.9rem; }
+        input:focus { border-color: var(--primary); }
+
+        .controls label { display: block; margin: 15px 0 5px; font-size: 0.9rem; opacity: 0.8; }
         
         button {
             background: var(--primary);
+            color: #064e3b;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 30px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
-            transition: transform 0.1s;
+            font-weight: 900;
+            font-size: 1rem;
+            transition: all 0.2s;
         }
 
-        button:active { transform: scale(0.95); }
+        button:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
 
         .hidden { display: none; }
-        #feedback { margin-top: 10px; height: 20px; font-size: 0.9rem; }
+        #feedback { margin-top: 15px; height: 24px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container" id="setup-screen">
-    <h1>Base Master</h1>
+    <h1 style="margin-top:0">BASE MASTER 2.0</h1>
     <div class="controls">
-        <label>Difficulty (Max Number)</label>
-        <select id="difficulty">
-            <option value="15">Easy (0-15)</option>
-            <option value="63">Medium (0-63)</option>
-            <option value="255">Hard (0-255)</option>
+        <label>Difficulty Range</label>
+        <select id="difficulty" style="padding: 8px; width: 100%;">
+            <option value="15">Easy (0 - 15)</option>
+            <option value="63">Medium (0 - 63)</option>
+            <option value="255">Hard (0 - 255)</option>
+            <option value="1023">Expert (0 - 1023)</option>
         </select>
 
         <label>Timer (Seconds)</label>
-        <input type="number" id="timer-input" value="30" min="5" style="width: 60px;">
+        <input type="number" id="timer-input" value="45" min="5" style="width: 100px; font-size: 1rem; padding: 8px;">
     </div>
-    <br>
-    <button onclick="startGame()">START GAME</button>
+    <br><br>
+    <button onclick="startGame()">INITIALIZE GAME</button>
 </div>
 
 <div class="container hidden" id="game-screen">
     <div class="stats">
-        <span>Score: <span id="score">0</span></span>
-        <span>Time: <span id="timer">0</span>s</span>
+        <span>SCORE: <span id="score">0</span></span>
+        <span>TIME: <span id="timer">0</span>s</span>
     </div>
 
     <div class="question-box">
-        Convert <span id="from-base" style="color:var(--primary)"></span> to <span id="to-base" style="color:var(--primary)"></span>:
-        <strong id="target-value">--</strong>
+        <div style="margin-bottom: 10px; opacity: 0.7;">Convert to <span id="to-base-name"></span></div>
+        <span id="target-display">--</span><span class="base-sub" id="from-base-sub"></span>
     </div>
 
-    <input type="text" id="answer-input" placeholder="Type answer..." autocomplete="off">
+    <input type="text" id="answer-input" placeholder="Type Answer..." autocomplete="off">
     <div id="feedback"></div>
     <br>
-    <button onclick="checkAnswer()">SUBMIT</button>
+    <button onclick="checkAnswer()">SUBMIT [ENTER]</button>
 </div>
 
 <script>
@@ -124,6 +140,7 @@
     let timeLeft = 0;
     let gameInterval;
     let currentCorrectAnswer = "";
+
     const bases = [
         { name: "Decimal", value: 10 },
         { name: "Binary", value: 2 },
@@ -135,7 +152,7 @@
         score = 0;
         timeLeft = parseInt(document.getElementById('timer-input').value);
         document.getElementById('setup-screen').classList.add('hidden');
-        document.getElementById('game-screen').classList.remove('hidden');
+        document.getElementById('game-screen').classList.remove('remove', 'hidden');
         document.getElementById('score').innerText = score;
         
         nextQuestion();
@@ -151,7 +168,6 @@
         const maxNum = parseInt(document.getElementById('difficulty').value);
         const randomNum = Math.floor(Math.random() * (maxNum + 1));
         
-        // Pick two different random bases
         let b1 = Math.floor(Math.random() * bases.length);
         let b2;
         do { b2 = Math.floor(Math.random() * bases.length); } while (b1 === b2);
@@ -159,39 +175,58 @@
         const fromBase = bases[b1];
         const toBase = bases[b2];
 
-        document.getElementById('from-base').innerText = fromBase.name;
-        document.getElementById('to-base').innerText = toBase.name;
-        document.getElementById('target-value').innerText = randomNum.toString(fromBase.value).toUpperCase();
+        // Format the display: uppercase and pad to at least 4 digits
+        let displayVal = randomNum.toString(fromBase.value).toUpperCase();
+        while(displayVal.length < 4) {
+            displayVal = "0" + displayVal;
+        }
+
+        document.getElementById('to-base-name').innerText = toBase.name;
+        document.getElementById('from-base-sub').innerText = fromBase.value;
+        document.getElementById('target-display').innerText = displayVal;
         
+        // Correct answer (we don't pad the answer unless it's binary, 
+        // but usually, leading zeros in math don't change value. 
+        // We'll accept the standard string conversion).
         currentCorrectAnswer = randomNum.toString(toBase.value).toUpperCase();
+        
         document.getElementById('answer-input').value = "";
         document.getElementById('answer-input').focus();
+        document.getElementById('feedback').innerText = "";
     }
 
     function checkAnswer() {
-        const userAnswer = document.getElementById('answer-input').value.trim().toUpperCase();
+        let userAnswer = document.getElementById('answer-input').value.trim().toUpperCase();
         const feedback = document.getElementById('feedback');
 
-        if (userAnswer === currentCorrectAnswer) {
+        // Logic: Remove leading zeros from user answer for comparison 
+        // so "0010" and "10" are both correct for decimal ten.
+        let normalizedUser = userAnswer.replace(/^0+(?!$)/, '');
+        let normalizedCorrect = currentCorrectAnswer.replace(/^0+(?!$)/, '');
+
+        if (normalizedUser === normalizedCorrect && userAnswer !== "") {
             score++;
             document.getElementById('score').innerText = score;
-            feedback.style.color = "#4caf50";
-            feedback.innerText = "Correct!";
-            nextQuestion();
+            feedback.style.color = varColor('--primary');
+            feedback.innerText = "✓ EXCELLENT";
+            setTimeout(nextQuestion, 600);
         } else {
-            feedback.style.color = "#f44336";
-            feedback.innerText = "Wrong! Try again.";
+            feedback.style.color = "#ff4444";
+            feedback.innerText = "× INCORRECT";
         }
     }
 
-    // Allow Enter key to submit
+    function varColor(name) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name);
+    }
+
     document.getElementById('answer-input').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') checkAnswer();
     });
 
     function endGame() {
         clearInterval(gameInterval);
-        alert(`Game Over! Your final score: ${score}`);
+        alert(`SESSION COMPLETE\nFinal Score: ${score}`);
         document.getElementById('setup-screen').classList.remove('hidden');
         document.getElementById('game-screen').classList.add('hidden');
     }
