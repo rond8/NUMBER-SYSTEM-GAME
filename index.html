@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base Master: Mega Edition</title>
+    <title>Base Master: Ultimate Edition</title>
     <style>
         :root {
             --primary: #fbbf24;
             --secondary: #3b82f6;
+            --success: #22c55e;
+            --danger: #ef4444;
             --bg: #0f172a;
             --card: #1e293b;
             --text: #f8fafc;
@@ -29,11 +31,10 @@
             padding: 2rem;
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            width: 90%;
-            max-width: 600px;
+            width: 95%;
+            max-width: 650px;
             text-align: center;
             border: 1px solid #334155;
-            position: relative;
         }
 
         .stats {
@@ -46,80 +47,84 @@
 
         .question-box {
             margin: 20px 0;
-            padding: 20px;
-            background: rgba(0,0,0,0.3);
+            padding: 25px;
+            background: rgba(0,0,0,0.4);
             border-radius: 12px;
-            overflow-x: auto;
+            border: 1px dashed var(--primary);
         }
 
         #target-display {
-            font-size: 2.2rem;
-            display: inline-block;
+            font-size: 2.5rem;
             color: white;
-            white-space: nowrap;
+            word-break: break-all;
         }
 
-        .base-sub {
-            font-size: 1rem;
-            vertical-align: sub;
-            color: var(--primary);
-            margin-left: 8px;
-        }
+        .base-sub { font-size: 1.2rem; vertical-align: sub; color: var(--primary); margin-left: 5px; }
 
         input {
             width: 80%;
-            padding: 12px;
-            font-size: 1.3rem;
+            padding: 15px;
+            font-size: 1.5rem;
             border-radius: 8px;
             border: 2px solid #334155;
-            background: #0f172a;
+            background: #020617;
             color: white;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
-        .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
-        
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
         button {
-            padding: 12px 24px;
+            padding: 12px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 800;
             border: none;
+            text-transform: uppercase;
             transition: 0.2s;
         }
 
-        .btn-main { background: var(--primary); color: #451a03; }
+        .btn-main { background: var(--primary); color: #451a03; grid-column: span 2; font-size: 1.2rem; }
+        .btn-sub { background: #334155; color: white; }
         .btn-help { background: var(--secondary); color: white; }
 
-        /* Modal Styles */
+        /* Modals */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.9);
             z-index: 100;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .modal-content {
             background: var(--card);
             padding: 2rem;
             border-radius: 15px;
-            max-width: 500px;
-            max-height: 80vh;
+            max-width: 550px;
+            max-height: 85vh;
             overflow-y: auto;
             text-align: left;
-            border: 1px solid var(--secondary);
+            border: 2px solid var(--secondary);
         }
 
-        .formula-box {
-            background: #0f172a;
-            padding: 10px;
-            border-left: 4px solid var(--secondary);
+        .formula-step {
+            background: #020617;
+            padding: 12px;
             margin: 10px 0;
+            border-radius: 5px;
             font-size: 0.9rem;
+            line-height: 1.5;
+            border-left: 3px solid var(--primary);
         }
 
         .hidden { display: none; }
@@ -128,21 +133,23 @@
 <body>
 
 <div class="container" id="setup-screen">
-    <h1 style="color: var(--primary)">BASE MASTER</h1>
-    <p>Range: 100 - 4,000,000</p>
+    <h1 style="color: var(--primary); margin-bottom:0;">BASE MASTER 3.0</h1>
+    <p style="opacity: 0.6;">System Range: 100 to 4,000,000</p>
     
-    <label>Limit:</label><br>
-    <select id="difficulty" style="padding: 10px; width: 80%; margin-bottom: 15px;">
-        <option value="1000">1,000</option>
-        <option value="50000">50,000</option>
-        <option value="1000000">1,000,000</option>
-        <option value="4000000">4,000,000</option>
-    </select><br>
+    <div style="text-align: left; margin: 20px auto; width: 80%;">
+        <label>Difficulty (Max Value):</label>
+        <select id="difficulty" style="width:100%; padding: 10px; margin-bottom:15px;">
+            <option value="1000">Starter (1,000)</option>
+            <option value="50000">Intermediate (50,000)</option>
+            <option value="1000000">Expert (1,000,000)</option>
+            <option value="4000000" selected>Titan (4,000,000)</option>
+        </select>
 
-    <label>Timer (Seconds):</label><br>
-    <input type="number" id="timer-input" value="60" style="width: 60px;"><br><br>
+        <label>Time Limit (Seconds):</label>
+        <input type="number" id="timer-input" value="120" style="width:100%; font-size: 1rem; padding: 10px;">
+    </div>
 
-    <button class="btn-main" onclick="startGame()">START MISSION</button>
+    <button class="btn-main" onclick="startGame()">INITIALIZE SYSTEM</button>
 </div>
 
 <div class="container hidden" id="game-screen">
@@ -152,55 +159,58 @@
     </div>
 
     <div class="question-box">
-        <div style="margin-bottom: 10px; opacity: 0.6;">Convert to <span id="to-base-name" style="color:white"></span></div>
-        <span id="target-display">--</span><span class="base-sub" id="from-base-sub"></span>
+        <div style="margin-bottom: 10px; color: #94a3b8;">Convert to <span id="to-base-name" style="color:var(--primary); font-weight:bold;"></span></div>
+        <span id="target-display">0000</span><span class="base-sub" id="from-base-sub">10</span>
     </div>
 
-    <input type="text" id="answer-input" placeholder="Result..." autocomplete="off">
+    <input type="text" id="answer-input" placeholder="Enter Result..." autocomplete="off">
     
-    <div class="btn-group">
-        <button class="btn-main" onclick="checkAnswer()">SUBMIT</button>
-        <button class="btn-help" onclick="toggleModal(true)">FORMULAS</button>
+    <div class="btn-grid">
+        <button class="btn-main" onclick="checkAnswer()">SUBMIT ANSWER</button>
+        <button class="btn-help" onclick="showFormulas()">FULL FORMULAS</button>
+        <button class="btn-sub" onclick="showSolution()">SHOW SOLUTION</button>
     </div>
-    <div id="feedback" style="margin-top:15px; font-weight:bold;"></div>
+    <div id="feedback" style="margin-top:20px; font-weight:bold; height: 20px;"></div>
 </div>
 
-<div id="formula-modal" class="modal" onclick="toggleModal(false)">
+<div id="formula-modal" class="modal" onclick="closeModals()">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <h3>Conversion Guide</h3>
+        <h2 style="color:var(--primary)">Mastering Conversions</h2>
         
-        <strong>1. Decimal to Any Base (Division Method)</strong>
-        <p>Divide the decimal number by the target base. Keep the remainder. Repeat until the quotient is 0. Read remainders bottom-up.</p>
-        <div class="formula-box">
-            Example: 13 to Binary (Base 2)<br>
-            13 ÷ 2 = 6 (Rem: 1)<br>
-            6 ÷ 2 = 3 (Rem: 0)<br>
-            3 ÷ 2 = 1 (Rem: 1)<br>
-            1 ÷ 2 = 0 (Rem: 1) &rarr; <strong>1101</strong>
+        <h3>1. Decimal to Any Base</h3>
+        <p>Divide the number by the target base ($n$), record the remainder, and repeat with the quotient.</p>
+        <div class="formula-step">
+            <strong>Equation:</strong> $Num \div Base = Quotient \dots Remainder$<br>
+            <em>Read remainders in reverse order.</em>
         </div>
 
-        <strong>2. Any Base to Decimal (Positional)</strong>
-        <p>Multiply each digit by the base raised to its position power ($base^{position}$), then sum them up.</p>
-        <div class="formula-box">
-            Example: $101_2$ to Decimal<br>
-            $(1 \times 2^2) + (0 \times 2^1) + (1 \times 2^0)$<br>
-            $4 + 0 + 1 = 5$
+        <h3>2. Any Base to Decimal</h3>
+        <p>Sum of (Digit $\times$ $Base^{Position}$):</p>
+        <div class="formula-step">
+            Example: $1011_2$ <br>
+            $(1 \times 2^3) + (0 \times 2^2) + (1 \times 2^1) + (1 \times 2^0) = 11$
         </div>
 
-        <strong>3. Hexadecimal Key</strong>
-        <p>A=10, B=11, C=12, D=13, E=14, F=15</p>
+        <h3>3. Hexadecimal Map</h3>
+        <div class="formula-step">
+            A:10 | B:11 | C:12 | D:13 | E:14 | F:15
+        </div>
 
-        <button class="btn-main" style="width:100%" onclick="toggleModal(false)">CLOSE</button>
+        <button class="btn-main" onclick="closeModals()">RETURN TO GAME</button>
+    </div>
+</div>
+
+<div id="solution-modal" class="modal" onclick="closeModals()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 style="color:var(--secondary)">Step-by-Step Solution</h2>
+        <div id="solution-steps"></div>
+        <button class="btn-main" onclick="closeModals()">I UNDERSTAND</button>
     </div>
 </div>
 
 <script>
-    let score = 0, timeLeft = 0, gameInterval, currentCorrectAnswer = "";
-    const bases = [{n:"Decimal", v:10}, {n:"Binary", v:2}, {n:"Octal", v:8}, {n:"Hex", v:16}];
-
-    function toggleModal(show) {
-        document.getElementById('formula-modal').style.display = show ? 'flex' : 'none';
-    }
+    let score = 0, timeLeft = 0, gameInterval, currentNum = 0, currentFromBase = 10, currentToBase = 2;
+    const bases = [{n:"Decimal", v:10}, {n:"Binary", v:2}, {n:"Octal", v:8}, {n:"Hexadecimal", v:16}];
 
     function startGame() {
         score = 0;
@@ -217,17 +227,18 @@
 
     function nextQuestion() {
         const max = parseInt(document.getElementById('difficulty').value);
-        const num = Math.floor(Math.random() * (max - 100 + 1)) + 100;
-        let b1 = Math.floor(Math.random()*4), b2;
-        do { b2 = Math.floor(Math.random()*4); } while(b1===b2);
+        currentNum = Math.floor(Math.random() * (max - 100 + 1)) + 100;
+        
+        let b1 = Math.floor(Math.random() * 4), b2;
+        do { b2 = Math.floor(Math.random() * 4); } while(b1 === b2);
 
-        document.getElementById('to-base-name').innerText = bases[b2].n;
-        document.getElementById('from-base-sub').innerText = bases[b1].v;
+        currentFromBase = bases[b1];
+        currentToBase = bases[b2];
+
+        document.getElementById('to-base-name').innerText = currentToBase.n;
+        document.getElementById('from-base-sub').innerText = currentFromBase.v;
+        document.getElementById('target-display').innerText = currentNum.toString(currentFromBase.v).toUpperCase().padStart(4, '0');
         
-        let display = num.toString(bases[b1].v).toUpperCase().padStart(4, '0');
-        document.getElementById('target-display').innerText = display;
-        
-        currentCorrectAnswer = num.toString(bases[b2].v).toUpperCase();
         document.getElementById('answer-input').value = "";
         document.getElementById('answer-input').focus();
         document.getElementById('feedback').innerText = "";
@@ -235,23 +246,55 @@
 
     function checkAnswer() {
         let user = document.getElementById('answer-input').value.trim().toUpperCase().replace(/^0+(?!$)/, '');
-        let correct = currentCorrectAnswer.replace(/^0+(?!$)/, '');
+        let correct = currentNum.toString(currentToBase.v).toUpperCase().replace(/^0+(?!$)/, '');
 
         if (user === correct && user !== "") {
             score++;
             document.getElementById('score').innerText = score;
-            document.getElementById('feedback').style.color = "#4ade80";
-            document.getElementById('feedback').innerText = "CORRECT!";
-            setTimeout(nextQuestion, 600);
+            document.getElementById('feedback').style.color = "var(--success)";
+            document.getElementById('feedback').innerText = "SYSTEM VERIFIED: CORRECT";
+            setTimeout(nextQuestion, 800);
         } else {
-            document.getElementById('feedback').style.color = "#f87171";
-            document.getElementById('feedback').innerText = "WRONG! TRY AGAIN";
+            document.getElementById('feedback').style.color = "var(--danger)";
+            document.getElementById('feedback').innerText = "ERROR: INVALID CONVERSION";
         }
+    }
+
+    function showFormulas() { document.getElementById('formula-modal').style.display = 'flex'; }
+    
+    function showSolution() {
+        let steps = `<strong>Question:</strong> Convert ${currentNum.toString(currentFromBase.v).toUpperCase()} (${currentFromBase.n}) to ${currentToBase.n}<br><br>`;
+        
+        steps += `<strong>Step 1: Convert to Decimal</strong><br>`;
+        if (currentFromBase.v === 10) {
+            steps += `Value is already decimal: ${currentNum}<br><br>`;
+        } else {
+            steps += `Standard Expansion: ${currentNum.toString(currentFromBase.v).toUpperCase()} base ${currentFromBase.v} = ${currentNum}<br><br>`;
+        }
+
+        steps += `<strong>Step 2: Convert Decimal to ${currentToBase.n}</strong><br>`;
+        let tempNum = currentNum;
+        let path = [];
+        while(tempNum > 0) {
+            let rem = tempNum % currentToBase.v;
+            let hexRem = rem.toString(16).toUpperCase();
+            path.push(`${tempNum} ÷ ${currentToBase.v} = ${Math.floor(tempNum/currentToBase.v)} (Rem: ${hexRem})`);
+            tempNum = Math.floor(tempNum / currentToBase.v);
+        }
+        steps += path.join('<br>') + `<br><br><strong>Final Result: ${currentNum.toString(currentToBase.v).toUpperCase()}</strong>`;
+
+        document.getElementById('solution-steps').innerHTML = steps;
+        document.getElementById('solution-modal').style.display = 'flex';
+    }
+
+    function closeModals() {
+        document.getElementById('formula-modal').style.display = 'none';
+        document.getElementById('solution-modal').style.display = 'none';
     }
 
     function endGame() {
         clearInterval(gameInterval);
-        alert("Time's up! Score: " + score);
+        alert("TIMELIMIT REACHED. Score: " + score);
         location.reload();
     }
 
